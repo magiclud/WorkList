@@ -1,25 +1,28 @@
 package com.example.StudyBuddyMobile;
 
 import android.app.Activity;
-import android.content.Intent;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import com.example.StudyBuddyMobile.Connector.Answer.ServerAnswer;
-import com.example.StudyBuddyMobile.Connector.HtmlContentRetriever;
+import com.example.StudyBuddyMobile.connector.DownloadWebsiteTask;
 
-import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class Settings extends Activity {
+
+    private static final String DEBUG = "SETTINGS";
+    private static final String linkFormat = "http://10.0.2.2:9000/%s/%s/xml";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Intent intent = getIntent();
-
         setContentView(R.layout.settings);
     }
 
@@ -30,18 +33,37 @@ public class Settings extends Activity {
         String loginString = login.getText().toString();
         String passwordString = password.getText().toString();
 
-        Toast toast = Toast.makeText(getApplicationContext(), "App error", Toast.LENGTH_SHORT);
-        try {
-            ServerAnswer serverAnswer = HtmlContentRetriever.INSTANCE.checkCredentials(loginString, passwordString);
-            if ( serverAnswer.authenticated() ) {
-                toast = Toast.makeText(getApplicationContext(), "OK!", Toast.LENGTH_SHORT);
-            } else {
-                toast = Toast.makeText(getApplicationContext(), serverAnswer.getContent(), Toast.LENGTH_SHORT);
-            }
-        } catch (IOException e) {
-            Log.e("saveCredentials", "ERROR");
+        if (loginString.isEmpty() || passwordString.isEmpty()) {
+            Toast toast = Toast.makeText(getApplicationContext(), "Empty input", Toast.LENGTH_SHORT);
+            toast.show();
+            return;
         }
-        toast.show();
+        if (!checkConnectivity()) {
+            Toast toast = Toast.makeText(getApplicationContext(), "No connection", Toast.LENGTH_SHORT);
+            toast.show();
+            return;
+        }
+
+        DownloadWebsiteTask download = new DownloadWebsiteTask();
+        download.execute(String.format(linkFormat, loginString, passwordString));
+
+        String s = "Thread error";
+        try {
+            s = download.get(1000, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            Log.e(DEBUG, "Interrupt");
+        } catch (ExecutionException e) {
+            Log.e(DEBUG, "Execution");
+        } catch (TimeoutException e) {
+            Log.e(DEBUG, "Timeout");
+        }
+        Log.d(DEBUG, s);
+    }
+
+    private boolean checkConnectivity() {
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        return (networkInfo != null && networkInfo.isConnected());
     }
 
 }
