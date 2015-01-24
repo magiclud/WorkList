@@ -7,20 +7,21 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class DownloadWebsiteTask extends AsyncTask<String, Void, String> {
+public class XmlDownloaderTask extends AsyncTask<String, Void, String> {
+
+    private static final String errorXML = "<list><error id=\"3\"><message>IO Error</message></error><items></items></list>";
 
     @Override
     protected String doInBackground(String... params) {
         try {
             return downloadUrl(params[0]);
         } catch (IOException e) {
-            return "<list><error id=\"3\"><message>IO Error</message></error><items></items></list>";
+            return errorXML;
         }
     }
 
     protected String downloadUrl(String urlString) throws IOException {
         InputStream input = null;
-        int len = 50000;
 
         try {
             URL url = new URL(urlString);
@@ -33,7 +34,7 @@ public class DownloadWebsiteTask extends AsyncTask<String, Void, String> {
             conn.connect();
 
             input = conn.getInputStream();
-            return readIt(input, len);
+            return getStringFromInputStream(input);
         } finally {
             if (input != null) {
                 input.close();
@@ -41,10 +42,17 @@ public class DownloadWebsiteTask extends AsyncTask<String, Void, String> {
         }
     }
 
-    protected String readIt(InputStream stream, int len) throws IOException {
-        Reader reader = new InputStreamReader(stream, "UTF-8");
-        char[] buffer = new char[len];
-        reader.read(buffer);
-        return new String(buffer).trim();
+    private String getStringFromInputStream(InputStream is) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        String line;
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        while ((line = br.readLine()) != null) {
+            sb.append(line);
+        }
+        br.close();
+
+        return sb.toString();
+
     }
 }

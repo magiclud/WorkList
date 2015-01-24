@@ -9,27 +9,34 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-import com.example.StudyBuddyMobile.connector.DownloadWebsiteTask;
 import com.example.StudyBuddyMobile.parser.models.Root;
-import com.example.StudyBuddyMobile.parser.ParserTask;
+import com.example.StudyBuddyMobile.util.Downloader;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.io.*;
 
 public class Settings extends Activity {
 
     private static final String DEBUG = "SETTINGS";
-    private static final String FILENAME = "list.xml";
-    private static final String linkFormat = "http://10.0.2.2:9000/%s/%s/xml";
+    private static final String XMLFILE = "list.xml";
+    private static final String CREDENTIALS = "credentials.txt";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings);
+
+        EditText login = (EditText) findViewById(R.id.login);
+        EditText password = (EditText) findViewById(R.id.password);
+
+        try {
+            FileInputStream fis = openFileInput(CREDENTIALS);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
+
+            login.setText(reader.readLine());
+            password.setText(reader.readLine());
+
+            fis.close();
+        } catch (IOException e) { }
     }
 
     public void saveCredentials(View view) {
@@ -39,64 +46,29 @@ public class Settings extends Activity {
         String loginString = login.getText().toString();
         String passwordString = password.getText().toString();
 
-        if (loginString.isEmpty() || passwordString.isEmpty()) {
-            Toast toast = Toast.makeText(getApplicationContext(), "Empty input", Toast.LENGTH_SHORT);
-            toast.show();
-            return;
-        }
-        if (!checkConnectivity()) {
-            Toast toast = Toast.makeText(getApplicationContext(), "No connection", Toast.LENGTH_SHORT);
-            toast.show();
+        if (!checkBasicRules(loginString, passwordString)) {
             return;
         }
 
-        DownloadWebsiteTask download = new DownloadWebsiteTask();
-        download.execute(String.format(linkFormat, loginString, passwordString));
+        String output = Downloader.INSTANCE.getXmlStringFromURL(loginString, passwordString);
+        saveStringToFile(output, XMLFILE);
 
-        String output = "";
-        try {
-            output = download.get(1000, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException e) {
-            Log.e(DEBUG, "Interrupt");
-        } catch (ExecutionException e) {
-            Log.e(DEBUG, "Execution");
-        } catch (TimeoutException e) {
-            Log.e(DEBUG, "Timeout");
-        }
-
-        if( output.isEmpty() ) {
-            Toast toast = Toast.makeText(getApplicationContext(), "Could not download file", Toast.LENGTH_SHORT);
+        Root xml = readXmlFromFile();
+        if (xml == null) {
+            Toast toast = Toast.makeText(getApplicationContext(), "Could not parse file", Toast.LENGTH_SHORT);
             toast.show();
             return;
         }
 
-        try {
-            FileOutputStream fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
-            fos.write(output.getBytes());
-            fos.close();
-        } catch (IOException e) {
-            Log.e(DEBUG, "XML File writing error");
+        if( xml.getError().getId() > 0 ) {
+            Toast toast = Toast.makeText(getApplicationContext(), xml.getError().getMessage(), Toast.LENGTH_SHORT);
+            toast.show();
+            return;
         }
 
-        Root xml = null;
-        try {
-            FileInputStream fis = openFileInput(FILENAME);
-            ParserTask parser = new ParserTask();
-            parser.execute(fis);
-            xml = parser.get(1000, TimeUnit.MILLISECONDS);
-            fis.close();
-        } catch (IOException e) {
-            Log.e(DEBUG, "XML File reading error");
-            Log.e(DEBUG, e.toString());
-        } catch (InterruptedException e) {
-            Log.e(DEBUG, "Interrupt");
-        } catch (ExecutionException e) {
-            Log.e(DEBUG, "Execution");
-        } catch (TimeoutException e) {
-            Log.e(DEBUG, "Timeout");
-        }
-
-
+        saveStringToFile(loginString + "\n" + passwordString + "\n", CREDENTIALS);
+        Toast toast = Toast.makeText(getApplicationContext(), "OK", Toast.LENGTH_SHORT);
+        toast.show();
     }
 
     private boolean checkConnectivity() {
@@ -105,4 +77,45 @@ public class Settings extends Activity {
         return (networkInfo != null && networkInfo.isConnected());
     }
 
+    private boolean checkBasicRules(String loginString, String passwordString) {
+        if (loginString.isEmpty() || passwordString.isEmpty()) {
+            Toast toast = Toast.makeText(getApplicationContext(), "Empty input", Toast.LENGTH_SHORT);
+            toast.show();
+            return false;
+        }
+        if (!checkConnectivity()) {
+            Toast toast = Toast.makeText(getApplicationContext(), "No connection", Toast.LENGTH_SHORT);
+            toast.show();
+            return false;
+        }
+        return true;
+    }
+
+    private boolean saveStringToFile(String content, String filename) {
+        if( content == null || filename == null ) {
+            return false;
+        }
+
+        try {
+            FileOutputStream fos = openFileOutput(filename, Context.MODE_PRIVATE);
+            fos.write(content.getBytes());
+            fos.close();
+        } catch (IOException e) {
+            Log.e(DEBUG, "File writing error");
+            return false;
+        }
+        return true;
+    }
+
+    private Root readXmlFromFile() {
+        try {
+            FileInputStream fis = openFileInput(XMLFILE);
+            Root xml = Downloader.INSTANCE.getRootFromXmlFile(fis);
+            fis.close();
+            return xml;
+        } catch (IOException e) {
+            Log.e(DEBUG, "XML File reading error");
+            return null;
+        }
+    }
 }

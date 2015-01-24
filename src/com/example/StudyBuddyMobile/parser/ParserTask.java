@@ -22,9 +22,4 @@ public class ParserTask extends AsyncTask<InputStream, Void, Root> {
             return null;
         }
     }
-
-    @Override
-    protected void onPostExecute(Root result) {
-
-    }
 }
