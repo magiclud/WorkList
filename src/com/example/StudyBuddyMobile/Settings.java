@@ -7,6 +7,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
+import com.example.StudyBuddyMobile.Connector.Answer.ServerAnswer;
+import com.example.StudyBuddyMobile.Connector.HtmlContentRetriever;
+
+import java.io.IOException;
 
 public class Settings extends Activity {
     @Override
@@ -22,8 +27,21 @@ public class Settings extends Activity {
         EditText login = (EditText) findViewById(R.id.login);
         EditText password = (EditText) findViewById(R.id.password);
 
-        Log.d("Settings", login.getText().toString() );
-        Log.d("Settings", password.getText().toString() );
+        String loginString = login.getText().toString();
+        String passwordString = password.getText().toString();
+
+        Toast toast = Toast.makeText(getApplicationContext(), "App error", Toast.LENGTH_SHORT);
+        try {
+            ServerAnswer serverAnswer = HtmlContentRetriever.INSTANCE.checkCredentials(loginString, passwordString);
+            if ( serverAnswer.authenticated() ) {
+                toast = Toast.makeText(getApplicationContext(), "OK!", Toast.LENGTH_SHORT);
+            } else {
+                toast = Toast.makeText(getApplicationContext(), serverAnswer.getContent(), Toast.LENGTH_SHORT);
+            }
+        } catch (IOException e) {
+            Log.e("saveCredentials", "ERROR");
+        }
+        toast.show();
     }
 
 }
