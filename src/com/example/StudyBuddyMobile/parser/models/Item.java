@@ -1,4 +1,4 @@
-package com.example.StudyBuddyMobile.connector.parser.models;
+package com.example.StudyBuddyMobile.parser.models;
 
 import org.simpleframework.xml.*;
 

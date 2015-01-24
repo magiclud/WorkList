@@ -1,8 +1,8 @@
-package com.example.StudyBuddyMobile.connector.parser;
+package com.example.StudyBuddyMobile.parser;
 
 import android.os.AsyncTask;
 import android.util.Log;
-import com.example.StudyBuddyMobile.connector.parser.models.Root;
+import com.example.StudyBuddyMobile.parser.models.Root;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 

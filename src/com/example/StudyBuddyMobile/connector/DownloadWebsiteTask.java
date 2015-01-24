@@ -14,7 +14,7 @@ public class DownloadWebsiteTask extends AsyncTask<String, Void, String> {
         try {
             return downloadUrl(params[0]);
         } catch (IOException e) {
-            return "<list><error><id>0</id><msg>IOException</msg></error></list>";
+            return "<list><error id=\"3\"><message>IO Error</message></error><items></items></list>";
         }
     }
 

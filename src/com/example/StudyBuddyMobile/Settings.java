@@ -10,8 +10,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.example.StudyBuddyMobile.connector.DownloadWebsiteTask;
-import com.example.StudyBuddyMobile.connector.parser.ParserTask;
-import com.example.StudyBuddyMobile.connector.parser.models.Root;
+import com.example.StudyBuddyMobile.parser.models.Root;
+import com.example.StudyBuddyMobile.parser.ParserTask;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -69,8 +69,6 @@ public class Settings extends Activity {
             toast.show();
             return;
         }
-
-        Log.d(DEBUG, output);
 
         try {
             FileOutputStream fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
