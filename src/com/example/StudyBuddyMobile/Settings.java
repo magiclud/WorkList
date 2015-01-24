@@ -10,7 +10,12 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.example.StudyBuddyMobile.connector.DownloadWebsiteTask;
+import com.example.StudyBuddyMobile.connector.parser.ParserTask;
+import com.example.StudyBuddyMobile.connector.parser.models.Root;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -18,6 +23,7 @@ import java.util.concurrent.TimeoutException;
 public class Settings extends Activity {
 
     private static final String DEBUG = "SETTINGS";
+    private static final String FILENAME = "list.xml";
     private static final String linkFormat = "http://10.0.2.2:9000/%s/%s/xml";
 
     @Override
@@ -47,9 +53,9 @@ public class Settings extends Activity {
         DownloadWebsiteTask download = new DownloadWebsiteTask();
         download.execute(String.format(linkFormat, loginString, passwordString));
 
-        String s = "Thread error";
+        String output = "";
         try {
-            s = download.get(1000, TimeUnit.MILLISECONDS);
+            output = download.get(1000, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             Log.e(DEBUG, "Interrupt");
         } catch (ExecutionException e) {
@@ -57,7 +63,42 @@ public class Settings extends Activity {
         } catch (TimeoutException e) {
             Log.e(DEBUG, "Timeout");
         }
-        Log.d(DEBUG, s);
+
+        if( output.isEmpty() ) {
+            Toast toast = Toast.makeText(getApplicationContext(), "Could not download file", Toast.LENGTH_SHORT);
+            toast.show();
+            return;
+        }
+
+        Log.d(DEBUG, output);
+
+        try {
+            FileOutputStream fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
+            fos.write(output.getBytes());
+            fos.close();
+        } catch (IOException e) {
+            Log.e(DEBUG, "XML File writing error");
+        }
+
+        Root xml = null;
+        try {
+            FileInputStream fis = openFileInput(FILENAME);
+            ParserTask parser = new ParserTask();
+            parser.execute(fis);
+            xml = parser.get(1000, TimeUnit.MILLISECONDS);
+            fis.close();
+        } catch (IOException e) {
+            Log.e(DEBUG, "XML File reading error");
+            Log.e(DEBUG, e.toString());
+        } catch (InterruptedException e) {
+            Log.e(DEBUG, "Interrupt");
+        } catch (ExecutionException e) {
+            Log.e(DEBUG, "Execution");
+        } catch (TimeoutException e) {
+            Log.e(DEBUG, "Timeout");
+        }
+
+
     }
 
     private boolean checkConnectivity() {

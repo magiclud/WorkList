@@ -9,8 +9,6 @@ import java.net.URL;
 
 public class DownloadWebsiteTask extends AsyncTask<String, Void, String> {
 
-    protected String result = "";
-
     @Override
     protected String doInBackground(String... params) {
         try {
@@ -18,15 +16,6 @@ public class DownloadWebsiteTask extends AsyncTask<String, Void, String> {
         } catch (IOException e) {
             return "<list><error><id>0</id><msg>IOException</msg></error></list>";
         }
-    }
-
-    @Override
-    protected void onPostExecute(String result) {
-        this.result = result;
-    }
-
-    public String getResult() {
-        return result;
     }
 
     protected String downloadUrl(String urlString) throws IOException {
