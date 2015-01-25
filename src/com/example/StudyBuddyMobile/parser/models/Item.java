@@ -30,7 +30,7 @@ public class Item {
     }
 
     public String getUrl() {
-        return url;
+        return url.trim();
     }
 
     public String getDeadline() {
@@ -46,12 +46,18 @@ public class Item {
         }
     }
 
-    public Item() { }
+    public Item() {
+    }
 
     public Item(String name, int number, String url, String deadline) {
         this.name = name;
         this.number = number;
         this.url = url;
         this.deadline = deadline;
+    }
+
+    @Override
+    public String toString() {
+        return name + " " + number;
     }
 }
