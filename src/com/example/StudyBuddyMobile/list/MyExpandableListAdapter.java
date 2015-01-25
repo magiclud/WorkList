@@ -1,6 +1,8 @@
 package com.example.StudyBuddyMobile.list;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -36,7 +38,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(int groupPosition, final int childPosition,
-                             boolean isLastChild, View convertView, ViewGroup parent) {
+                             boolean isLastChild, View convertView, final ViewGroup parent) {
         final Item children = (Item) getChild(groupPosition, childPosition);
         TextView text = null;
         if (convertView == null) {
@@ -47,7 +49,9 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("ADAPTER", children.getNumber() + "");
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(children.getUrl()));
+                Log.d("ADAPTER", children.getUrl());
+                activity.startActivity(intent);
             }
         });
         return convertView;

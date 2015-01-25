@@ -11,7 +11,7 @@
     <Button
             android:layout_width="282dp"
             android:layout_height="wrap_content"
-            android:text="New Button"
+            android:text="Test notification"
             android:id="@+id/button2" android:layout_gravity="center_horizontal"
             android:onClick="notify"/>
 </LinearLayout>

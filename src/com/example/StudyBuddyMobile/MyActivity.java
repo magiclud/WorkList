@@ -43,6 +43,14 @@ public class MyActivity extends Activity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        setContentView(R.layout.main);
+        getWindow().getDecorView().setBackgroundColor(Color.BLACK);
+        populateList();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_activity_actions, menu);
@@ -132,7 +140,6 @@ public class MyActivity extends Activity {
                     group.children.add(curItem);
                 }
             }
-
             groups.append(cnt++, group);
         }
     }
