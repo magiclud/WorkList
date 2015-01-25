@@ -18,7 +18,7 @@ public class Root {
         return error;
     }
 
-    public List getItems() {
+    public List<Item> getItems() {
         return items;
     }
 

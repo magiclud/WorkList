@@ -40,7 +40,7 @@ public enum Downloader {
         }
     }
 
-    public Root getRootFromXmlFile(InputStream fis) {
+    public Root getRootFromXmlInputStream(InputStream fis) {
         try {
             ParserTask parser = new ParserTask();
             parser.execute(fis);

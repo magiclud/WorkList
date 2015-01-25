@@ -110,7 +110,7 @@ public class Settings extends Activity {
     private Root readXmlFromFile() {
         try {
             FileInputStream fis = openFileInput(XMLFILE);
-            Root xml = Downloader.INSTANCE.getRootFromXmlFile(fis);
+            Root xml = Downloader.INSTANCE.getRootFromXmlInputStream(fis);
             fis.close();
             return xml;
         } catch (IOException e) {
