@@ -3,13 +3,13 @@
               android:orientation="vertical"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
-        >
+              android:weightSum="1">
     <ExpandableListView
             android:layout_width="match_parent"
-            android:layout_height="281dp"
-            android:id="@+id/expandableListView"/>
+            android:layout_height="432dp"
+            android:id="@+id/expandableListView" android:layout_weight="1.06"/>
     <Button
-            android:layout_width="wrap_content"
+            android:layout_width="282dp"
             android:layout_height="wrap_content"
             android:text="New Button"
             android:id="@+id/button2" android:layout_gravity="center_horizontal"
