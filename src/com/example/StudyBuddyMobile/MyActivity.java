@@ -4,6 +4,7 @@ import android.app.*;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
 
@@ -14,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.Toast;
 import com.example.StudyBuddyMobile.list.Group;
 import com.example.StudyBuddyMobile.list.MyExpandableListAdapter;
 import com.example.StudyBuddyMobile.parser.models.Item;
@@ -23,10 +25,13 @@ import com.example.StudyBuddyMobile.util.Downloader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class MyActivity extends Activity {
+
 
     private static final String DEBUG = "MYACTIVITY";
     private static final String XMLFILE = "list.xml";
@@ -145,10 +150,23 @@ public class MyActivity extends Activity {
     }
 
     public void notify(View vobj) {
+        //petla po wszystkich item
+        readDataDeadline();//->time
+
         String title = "TITLE";
+       long time =3000;
+        createNotification(time, title);
+
+        String title2 = "TITLE2";
+        long time2 =5000;
+        createNotification(time2, title2);
+
+    }
+
+    private void createNotification(long time, String title) {
+      //  String title = "TITLE";
         String subject = "SUBJECT";
         String body = "BODY";
-        int seconds = 10;
 
         // Give the intent the values so that we can populate the notification
         // in the receiver
@@ -161,21 +179,20 @@ public class MyActivity extends Activity {
         AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
 
-        AlarmManager alarmMgr1 = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        PendingIntent alarmIntent1 = PendingIntent.getBroadcast(this, 1, intent, 0);
-
-        AlarmManager alarmMgr2 = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        PendingIntent alarmIntent2 = PendingIntent.getBroadcast(this, 2, intent, 0);
-
         alarmMgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime() + 3000, alarmIntent);
+                SystemClock.elapsedRealtime() + time, alarmIntent);
 
-        alarmMgr1.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime() + 3000, alarmIntent1);
+    }
 
-        alarmMgr2.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime() + 5000, alarmIntent2);
+    private void readDataDeadline() {
 
-        Log.d(DEBUG, "BEJTON");
+         List<Item> xml = readXmlFromFile().getItems();
+
+       // for (Item item : xml) {
+            Toast.makeText(this, "DEADLINE before: " , Toast.LENGTH_SHORT).show();
+         //  Date deadline = xml.get(0).getDeadlineDate();
+         //   Log.d("CZAS", "!!!!!!!!!!!!!:   deadline.toString();");
+         //   Toast.makeText(this, "DEADLINE: " + deadline, Toast.LENGTH_SHORT).show();
+       // }
     }
 }
