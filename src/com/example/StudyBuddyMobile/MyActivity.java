@@ -36,7 +36,7 @@ public class MyActivity extends Activity {
     private static final String DEBUG = "MYACTIVITY";
     private static final String XMLFILE = "list.xml";
     private static final String CREDENTIALS = "credentials.txt";
-
+    private int notifyId=0;
     SparseArray<Group> groups = new SparseArray<Group>();
 
     @Override
@@ -156,7 +156,7 @@ public class MyActivity extends Activity {
         String title = "TITLE";
        long time =3000;
         createNotification(time, title);
-
+        notifyId++;
         String title2 = "TITLE2";
         long time2 =5000;
         createNotification(time2, title2);
@@ -174,10 +174,11 @@ public class MyActivity extends Activity {
         intent.putExtra(MyReceiver.TITLE_KEY, title);
         intent.putExtra(MyReceiver.SUBJECT_KEY, subject);
         intent.putExtra(MyReceiver.BODY_KEY, body);
-
+        intent.putExtra("NotificationId", notifyId); //to get id and receive unique notify
+        intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
         // Schedule the alarm
         AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(this, notifyId, intent, 0);
 
         alarmMgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() + time, alarmIntent);

@@ -1,17 +1,21 @@
 package com.example.StudyBuddyMobile;
 
+
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
+
+import java.util.Calendar;
 
 public class MyReceiver extends BroadcastReceiver {
     public  static final String TITLE_KEY = "TITLE_KEY";
     public static final String BODY_KEY = "body_key";
     public static final String SUBJECT_KEY = "subject_key";
-    int notifyID = 0;
+
     @Override
     public void onReceive(Context context, Intent intent) {
         String title = intent.getStringExtra(TITLE_KEY);
@@ -29,12 +33,9 @@ public class MyReceiver extends BroadcastReceiver {
                 .setContentTitle(title).setContentText(body).setTicker(subject)
                 .setContentIntent(pending)
                 .setWhen(System.currentTimeMillis());
-        mBuilder.setNumber(notifyID);
 
         NotificationManager NM = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        NM.notify(notifyID, mBuilder.build());
-
-        notifyID++;
+        NM.notify(intent.getExtras().getInt("NotificationId"), mBuilder.build());
 
     }
 

@@ -11,8 +11,19 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/gen" isTestSource="false" generated="true" />
     </content>
+<<<<<<< HEAD
+    <orderEntry type="jdk" jdkName="Android API 21 Platform" jdkType="Android SDK" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="v4" level="project" />
+=======
     <orderEntry type="jdk" jdkName="Android 5.0 Google APIs" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+<<<<<<< HEAD
     <orderEntry type="library" name="libs" level="project" />
+=======
+    <orderEntry type="library" name="simple-xml-2.7.1" level="project" />
+    <orderEntry type="library" name="android-support-v4" level="project" />
+>>>>>>> 6d77c5c2ee627ae940f4ff179c9bca38fb824927
+>>>>>>> ce8fd1a761a201219bef9dadc23d5a71b58f91da
   </component>
 </module>
