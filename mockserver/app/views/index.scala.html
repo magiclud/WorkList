@@ -1,29 +1,30 @@
-@(message: String)
-
-@if( !message.equals("") ) {
-    @message
-} else {
-    <?xml version="1.0" encoding="utf-8"?>
-    <list>
-        <item>
-            <dl> http://ki.pwr.edu.pl/cichon/2014_15_a/Grafika/Zadania/GrafikaZadania2014.pdf </dl>
-            <name> Grafika komputerowa </name>
-            <number> 1 </number>
+@(message: String, id: Integer)
+<list>
+    <error id="@id">
+        <message> @message </message>
+    </error>
+    <items>
+    @if(id == 0) {
+        <item name="Grafika komputerowa C" number="1">
+            <url> http://ki.pwr.edu.pl/cichon/2014_15_a/Grafika/Zadania/GrafikaZadania2014.pdf </url>
+            <deadline> 2015-02-01-06:00 </deadline>
         </item>
-        <item>
-            <dl> http://prac.im.pwr.wroc.pl/~klonowsk/FILES/Nlab1.pdf </dl>
-            <name> Kombinatoryka analityczna </name>
-            <number> 1 </number>
+        <item name="Kombinatoryka analityczna L" number="1">
+            <url> http://prac.im.pwr.wroc.pl/~klonowsk/FILES/Nlab1.pdf </url>
+            <deadline> 2015-01-20-07:00 </deadline>
         </item>
-        <item>
-            <dl> http://prac.im.pwr.wroc.pl/~klonowsk/FILES/Nlab2.pdf </dl>
-            <name> Kombinatoryka analityczna </name>
-            <number> 2 </number>
+        <item name="Kombinatoryka analityczna L" number="2">
+            <url> http://prac.im.pwr.wroc.pl/~klonowsk/FILES/Nlab2.pdf </url>
+            <deadline> 2015-01-27-21:00 </deadline>
         </item>
-        <item>
-            <dl> http://prac.im.pwr.wroc.pl/~klonowsk/FILES/Nlab3.pdf </dl>
-            <name> Kombinatoryka analityczna </name>
-            <number> 3 </number>
+        <item name="Kombinatoryka analityczna L" number="3">
+            <url> http://prac.im.pwr.wroc.pl/~klonowsk/FILES/Nlab3.pdf </url>
+            <deadline> 2015-02-04-07:20 </deadline>
         </item>
-    </list>
-}
+        <item name="Obliczenia naukowe C" number="1">
+            <url> http://prac.im.pwr.edu.pl/~pziel/lectures/scna/scnal1cw.pdf </url>
+            <deadline> 2015-02-04-07:20 </deadline>
+        </item>
+    }
+    </items>
+</list>
